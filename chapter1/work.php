@@ -1,12 +1,45 @@
 <?php
-//var_dump($_POST);
+//MySQLにデータを登録
+define('DB_DATABASE', 'work');
 
+define('DB_USERNAME', 'basic');
+
+define('DB_PASSWORD', 'Basic-pass1');
+
+define('DB_DSN', 'mysql:host=localhost;charset=utf8;dbname='.DB_DATABASE);
+
+setcookie('your_name', $_POST['your_name'], time()+3600);
+setcookie('email', $_POST['email'], time()+3600);
+setcookie('text', $_POST['text'], time()+3600);
 // 変数の初期化
 $page_flag = 0;
 if( !empty($_POST['btn_confirm']) ) {
 	$page_flag = 1;
 }elseif( !empty($_POST['btn_submit']) ) {
 	$page_flag = 2;
+
+	try {
+
+		$db = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
+	
+		// エラーが起きた際にExceptionを出力する設定
+	
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	
+		// クエリ実行
+	
+		$statement = $db->prepare("INSERT INTO work1(name, email, text) VALUES(?, ?, ?);");
+	
+		$statement->execute([$_POST['your_name'], $_POST['email'], $_POST['text']]);
+	
+		echo "Inserted Id : ".$db->lastInsertId();
+	
+	} catch (PDOException $e) {
+	
+		var_dump($e);
+	
+		exit;
+	}
 
 	// 変数とタイムゾーンを初期化
 	$header = null;
@@ -49,38 +82,6 @@ if( !empty($_POST['btn_confirm']) ) {
  
 	// 運営側へメール送信
 	mb_send_mail('ryo1and1@yahoo.co.jp', $admin_reply_subject, $admin_reply_text, $header);
-
-	//MySQLにデータを登録
-define('DB_DATABASE', 'work');
-
-define('DB_USERNAME', 'basic');
-
-define('DB_PASSWORD', 'Basic-pass1');
-
-define('DB_DSN', 'mysql:host=localhost;charset=utf8;dbname='.DB_DATABASE);
-
-try {
-
-    $db = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
-
-    // エラーが起きた際にExceptionを出力する設定
-
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // クエリ実行
-
-    $statement = $db->prepare("INSERT INTO work1(name, email, text) VALUES(?, ?, ?);");
-
-    $statement->execute([$_POST['your_name'], $_POST['email'], $_POST['text']]);
-
-    echo "Inserted Id : ".$db->lastInsertId();
-
-} catch (PDOException $e) {
-
-    var_dump($e);
-
-    exit;
-}
 }
 ?>
 
@@ -124,15 +125,15 @@ try {
 <form method="post" action="">
 	<div class="element_wrap">
 		<label>氏名</label><br>
-		<input type="text" name="your_name" value="">
+		<input type="text" name="your_name" value="<?php echo $_COOKIE['your_name']; ?>">
 	</div>
 	<div class="element_wrap">
 		<label>メールアドレス</label><br>
-		<input type="text" name="email" value="">
+		<input type="text" name="email" value="<?php echo $_COOKIE['email']; ?>">
     </div>
     <div class="element_wrap">
         <label>お問い合わせ内容</label><br>
-		<textarea type="text" name="text" value=""></textarea>
+		<textarea type="text" name="text" value="<?php echo $_COOKIE['text']; ?>"></textarea>
 	</div>
 	<input type="submit" name="btn_confirm" value="入力内容を確認する">
 </form>
