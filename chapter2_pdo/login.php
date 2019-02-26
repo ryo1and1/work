@@ -14,58 +14,46 @@ define('DB_PASSWORD', 'Basic-pass1');
 // DSN（データソースネーム）の定義
 
 define('DB_DSN', 'mysql:host=localhost;charset=utf8;dbname='.DB_DATABASE);
-session_start();
 
+session_start();
+// 既にログインしている場合にはメインページに遷移
+if (isset($_SESSION["USERID"])) {
+    header('Location:home.php');
+    exit;
+    }
 
 $errorMessage = "";
 
-// ログインボタンが押された場合
+
+// ログインボタンが押された場合[\]
 if (isset($_POST["login"])) {
     // 1. ユーザIDの入力チェック
     if (empty($_POST["userid"])) {  // emptyは値が空のとき
         $errorMessage = 'ユーザーIDが未入力です。';
+    } else if (empty($_POST["email"])) {
+        $errorMessage = 'メールアドレスが未入力です。';
     } else if (empty($_POST["password"])) {
         $errorMessage = 'パスワードが未入力です。';
     }
 
-    if (!empty($_POST["userid"]) && !empty($_POST["password"])) {
-        // 入力したユーザIDを格納
-        $userid = $_POST["userid"];
+    if (!empty($_POST["username"]) && !empty($_POST["password"]) && !empty($_POST["password2"]) && $_POST["password"] === $_POST["password2"]) {
+        $username = $_POST["username"];
 
-        // 2. ユーザIDとパスワードが入力されていたら認証する
-        $dsn = sprintf(DB_DSN);
+        $dsn = sprintf('mysql: host=%s; dbname=%s; charset=utf8', 'localhost', 'work2_users');
 
-        // 3. エラー処理
         try {
             $pdo = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
-
             $stmt = $pdo->prepare('SELECT * FROM work2_users WHERE name = ?');
-            $stmt->execute(array($userid));
-
+            $stmt->execute(array($username));
             $password = $_POST["password"];
 
-            if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                if (password_verify($password, $row['password'])) {
-                    session_regenerate_id(true);
-
-                    // 入力したIDのユーザー名を取得
-                    $id = $row['id'];
-                    $sql = "SELECT * FROM work2_users WHERE id = $id";  //入力したIDからユーザー名を取得
-                    $stmt = $pdo->query($sql);
-                    foreach ($stmt as $row) {
-                        $row['username'];  // ユーザー名
-                    }
-                    $_SESSION["NAME"] = $row['username'];
-                    header("Location: home.php");  // メイン画面へ遷移
-                    exit();  // 処理終了
-                } else {
-                    // 認証失敗
-                    $errorMessage = 'ユーザーIDあるいはパスワードに誤りがあります。';
-                }
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (password_verify($password, $result['password'])) {
+            $_SESSION['USERID'] = $username;
+            header('Location:home.php');
+            exit();
             } else {
-                // 4. 認証成功なら、セッションIDを新規に発行する
-                // 該当データなし
-                $errorMessage = 'ユーザーIDあるいはパスワードに誤りがあります。';
+            $errorMessage = 'ユーザーIDあるいはパスワードに誤りがあります。';
             }
         } catch (PDOException $e) {
             $errorMessage = 'データベースエラー';
@@ -90,6 +78,8 @@ if (isset($_POST["login"])) {
                 <legend>ログインフォーム</legend>
                 <div><font color="#ff0000"><?php echo htmlspecialchars($errorMessage, ENT_QUOTES); ?></font></div>
                 <label for="userid">ユーザーID</label><input type="text" id="userid" name="userid" placeholder="ユーザーIDを入力" value="<?php if (!empty($_POST["userid"])) {echo htmlspecialchars($_POST["userid"], ENT_QUOTES);} ?>">
+                <br>
+                <label for="email">メールアドレス</label><input type="email" id="email" name="email" placeholder="メールアドレスを入力" value="<?php if (!empty($_POST["username"])) {echo htmlspecialchars($_POST["username"], ENT_QUOTES);} ?>">
                 <br>
                 <label for="password">パスワード</label><input type="password" id="password" name="password" value="" placeholder="パスワードを入力">
                 <br>

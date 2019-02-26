@@ -14,11 +14,16 @@ define('DB_PASSWORD', 'Basic-pass1');
 // DSN（データソースネーム）の定義
 
 define('DB_DSN', 'mysql:host=localhost;charset=utf8;dbname='.DB_DATABASE);
-session_start();
 
 // エラーメッセージ、登録完了メッセージの初期化
 $errorMessage = "";
 $signUpMessage = "";
+
+session_start();
+if (isset($_SESSION['USERID'])) {
+    header('Location:home.php');
+    exit;
+    }
 
 // ログインボタンが押された場合
 if (isset($_POST["signUp"])) {
@@ -36,10 +41,11 @@ if (isset($_POST["signUp"])) {
     if (!empty($_POST["username"]) && !empty($_POST["password"]) && !empty($_POST["password2"]) && $_POST["password"] === $_POST["password2"]) {
         // 入力したユーザIDとパスワードを格納
         $username = $_POST["username"];
+        $email = $_POST["email"];
         $password = $_POST["password"];
 
         // 2. ユーザIDとパスワードが入力されていたら認証する
-        $dsn = sprintf(DB_DSN);
+        $dsn = sprintf('mysql: host=%s; dbname=%s; charset=utf8', 'localhost', 'work2_users');
 
         // 3. エラー処理
         try {
@@ -47,7 +53,7 @@ if (isset($_POST["signUp"])) {
 
             $stmt = $pdo->prepare("INSERT INTO work2_users(username, email, password) VALUES (?, ?, ?)");
 
-            $stmt->execute(array($username, password_hash($password, PASSWORD_DEFAULT)));  // パスワードのハッシュ化を行う（今回は文字列のみなのでbindValue(変数の内容が変わらない)を使用せず、直接excuteに渡しても問題ない）
+            $stmt->execute(array($username,$email,password_hash($password, PASSWORD_DEFAULT)));  // パスワードのハッシュ化を行う（今回は文字列のみなのでbindValue(変数の内容が変わらない)を使用せず、直接excuteに渡しても問題ない）
             $userid = $pdo->lastinsertid();  // 登録した(DB側でauto_incrementした)IDを$useridに入れる
 
             $signUpMessage = '登録が完了しました。あなたの登録IDは '. $userid. ' です。パスワードは '. $password. ' です。';  // ログイン時に使用するIDとパスワード
