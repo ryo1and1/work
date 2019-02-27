@@ -24,7 +24,6 @@ if (isset($_SESSION['USERID'])) {
     header('Location:home.php');
     exit;
     }
-
 // ログインボタンが押された場合
 if (isset($_POST["signUp"])) {
     // 1. ユーザIDの入力チェック
@@ -37,25 +36,19 @@ if (isset($_POST["signUp"])) {
     } else if (empty($_POST["password2"])) {
         $errorMessage = 'パスワードが未入力です。';
     }
-
-    if (!empty($_POST["username"]) && !empty($_POST["password"]) && !empty($_POST["password2"]) && $_POST["password"] === $_POST["password2"]) {
+    if (!empty($_POST["username"]) && !empty($_POST["email"]) && !empty($_POST["password"]) && !empty($_POST["password2"]) && $_POST["password"] === $_POST["password2"]) {
         // 入力したユーザIDとパスワードを格納
-        $username = $_POST["username"];
+        $userid = $_POST["userid"];
         $email = $_POST["email"];
         $password = $_POST["password"];
-
         // 2. ユーザIDとパスワードが入力されていたら認証する
         $dsn = sprintf('mysql: host=%s; dbname=%s; charset=utf8', 'localhost', 'work2_users');
-
         // 3. エラー処理
         try {
             $pdo = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
-
             $stmt = $pdo->prepare("INSERT INTO work2_users(username, email, password) VALUES (?, ?, ?)");
-
             $stmt->execute(array($username,$email,password_hash($password, PASSWORD_DEFAULT)));  // パスワードのハッシュ化を行う（今回は文字列のみなのでbindValue(変数の内容が変わらない)を使用せず、直接excuteに渡しても問題ない）
             $userid = $pdo->lastinsertid();  // 登録した(DB側でauto_incrementした)IDを$useridに入れる
-
             $signUpMessage = '登録が完了しました。あなたの登録IDは '. $userid. ' です。パスワードは '. $password. ' です。';  // ログイン時に使用するIDとパスワード
         } catch (PDOException $e) {
             $errorMessage = 'データベースエラー';
@@ -94,7 +87,7 @@ if (isset($_POST["signUp"])) {
         </form>
         <br>
         <form action="Login.php">
-            <input type="submit" value="戻る">
+            <input type="submit" value="ログイン">
         </form>
     </body>
 </html>

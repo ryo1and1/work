@@ -3,7 +3,7 @@ session_start();
 // logout.php?logoutにアクセスしたユーザーをログアウトする
 if(isset($_GET['logout'])) {
 	session_destroy();
-	unset($_SESSION['user']);
+	unset($_SESSION['USERID']);
 	header("Location: login.php");
 } else {
 	header("Location: login.php");
