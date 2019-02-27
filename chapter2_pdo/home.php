@@ -9,6 +9,7 @@ exit;
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>メインページ</title>
 </head>
 <body>
