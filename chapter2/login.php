@@ -8,7 +8,7 @@ define('DB_PASSWORD', 'Basic-pass1');
 // DSN（データソースネーム）の定義
 define('DB_DSN', 'mysql:host=localhost;charset=utf8;dbname='.DB_DATABASE);
 
-$username = $_POST["username"];
+$yourname = $_POST["yourname"];
 $email = $_POST["email"];
 $password = $_POST["password"];
 
@@ -22,7 +22,7 @@ $errorMessage[] = "";
 // ログインボタンが押された場合[\]
 if (isset($_POST["login"])) {
     // 1. ユーザIDの入力チェック
-    if (empty($username)) {  // emptyは値が空のとき
+    if (empty($yourname)) {  // emptyは値が空のとき
         $errorMessage['yourname'] = 'ユーザー名が未入力です。';
     } else if (empty($email)) {
         $errorMessage['email'] = 'メールアドレスが未入力です。';
@@ -30,17 +30,17 @@ if (isset($_POST["login"])) {
         $errorMessage['password'] = 'パスワードが未入力です。';
     }
     
-    if (!empty($_POST["username"]) && !empty($_POST["email"]) && !empty($_POST["password"])) {
+    if (!empty($_POST["yourname"]) && !empty($_POST["email"]) && !empty($_POST["password"])) {
                
 
         $dsn = sprintf('mysql: host=%s; dbname=%s; charset=utf8', 'localhost', 'work2_users');
         try {
             $pdo = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
             $stmt = $pdo->prepare('SELECT * FROM work2_users WHERE username = ? and email = ? and password = ?');
-            $stmt->execute(array($username,$email,$password));
+            $stmt->execute(array($yourname,$email,$password));
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if (password_verify($password, $result['password'])) {
-            $_SESSION['USERNAME'] = $username;
+            $_SESSION['USERNAME'] = $yourname;
             header('Location:home.php');
             exit();
             } else {
