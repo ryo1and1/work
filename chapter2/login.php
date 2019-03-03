@@ -8,7 +8,6 @@ define('DB_PASSWORD', 'Basic-pass1');
 // DSN（データソースネーム）の定義
 define('DB_DSN', 'mysql:host=localhost;charset=utf8;dbname='.DB_DATABASE);
 
-$yourname = $_POST["yourname"];
 $email = $_POST["email"];
 $password = $_POST["password"];
 
@@ -19,28 +18,29 @@ if (isset($_SESSION["USERNAME"])) {
     exit;
     }
 $errorMessage[] = "";
+
 // ログインボタンが押された場合[\]
 if (isset($_POST["login"])) {
     // 1. ユーザIDの入力チェック
-    if (empty($yourname)) {  // emptyは値が空のとき
-        $errorMessage['yourname'] = 'ユーザー名が未入力です。';
-    } else if (empty($email)) {
-        $errorMessage['email'] = 'メールアドレスが未入力です。';
-    } else if (empty($password)) {
-        $errorMessage['password'] = 'パスワードが未入力です。';
+    if ($email == "") {
+        $errorMessage['email'] = 'メールアドレスが入力されていません';
+    }
+    if ($password == "") {
+        $errorMessage['password'] = 'パスワードが入力されていません';
     }
     
-    if (!empty($_POST["yourname"]) && !empty($_POST["email"]) && !empty($_POST["password"])) {
+    if (!empty($email) && !empty($password)) {
                
 
         $dsn = sprintf('mysql: host=%s; dbname=%s; charset=utf8', 'localhost', 'work2_users');
         try {
             $pdo = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
-            $stmt = $pdo->prepare('SELECT * FROM work2_users WHERE username = ? and email = ? and password = ?');
-            $stmt->execute(array($yourname,$email,$password));
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $stmt = $pdo->prepare('SELECT * FROM work2_users WHERE email = ?');
+            $stmt->execute($email);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if (password_verify($password, $result['password'])) {
-            $_SESSION['USERNAME'] = $yourname;
+            $_SESSION['USERNAME'] = $email;
             header('Location:home.php');
             exit();
             } else {
@@ -67,12 +67,6 @@ if (isset($_POST["login"])) {
         <form name="loginForm" action="home.php" method="POST">
             <fieldset>
                 <legend>ログインフォーム</legend>
-                <label for="yourname">ユーザー名</label>
-                <input type="text" name="yourname" placeholder="ユーザー名を入力" value="<?php echo $username; ?>">
-                <?php if (isset($errorMessage['yourname'])) { ?>
-                <div style = "color:red;"><?php echo $errorMessage['yourname']; ?></div>
-                <?php } ?>
-                <br>
                 <label for="email">メールアドレス</label>
                 <input type="email" name="email" placeholder="メールアドレスを入力" value="<?php echo $email; ?>">
                 <?php if (isset($errorMessage['email'])) { ?>

@@ -30,7 +30,7 @@ if (count(array_keys($error))>0) {
     exit();
 }
 
-if (!empty($yourname) && !empty($email) && !empty($password) && !empty($password2) && !empty($password) == !empty($password2)) {
+if (!empty($yourname) && !empty($email) && !empty($password)) {
    
     // 2. ユーザIDとパスワードが入力されていたら認証する
     $dsn = sprintf('mysql: host=%s; dbname=%s; charset=utf8', 'localhost', 'work2_users');
