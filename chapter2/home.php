@@ -14,7 +14,8 @@ exit;
 </head>
 <body>
 <main>
-<p>メイン</p>
+<h1>メイン</h1>
+<a href="post.php">投稿</a>
 <a href="logout.php">ログアウト</a>
 </main>
 </body>

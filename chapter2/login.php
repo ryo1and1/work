@@ -36,8 +36,8 @@ if (isset($_POST["login"])) {
         try {
             $pdo = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $stmt = $pdo->prepare('SELECT * FROM work2_users WHERE email = ?');
-            $stmt->execute($email);
+            $stmt = $pdo->prepare('SELECT * FROM work2_users WHERE email = ?;');
+            $stmt->execute(array($email));
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if (password_verify($password, $result['password'])) {
             $_SESSION['USERNAME'] = $email;
