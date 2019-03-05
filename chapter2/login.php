@@ -17,8 +17,9 @@ if (isset($_SESSION["USERNAME"])) {
     header('Location:home.php');
     exit;
     }
-$errorMessage[] = "";
 
+$errorMessage[] = "";
+ 
 // ログインボタンが押された場合[\]
 if (isset($_POST["login"])) {
     // 1. ユーザIDの入力チェック
@@ -29,9 +30,8 @@ if (isset($_POST["login"])) {
         $errorMessage['password'] = 'パスワードが入力されていません';
     }
     
-    if (!empty($email) && !empty($password)) {
-               
-
+    
+    if (!empty($email) && !empty($password)) {         
         $dsn = sprintf('mysql: host=%s; dbname=%s; charset=utf8', 'localhost', 'work2_users');
         try {
             $pdo = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
@@ -39,6 +39,7 @@ if (isset($_POST["login"])) {
             $stmt = $pdo->prepare('SELECT * FROM work2_users WHERE email = ?;');
             $stmt->execute(array($email));
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            var_dump($password); 
             if (password_verify($password, $result['password'])) {
             $_SESSION['USERNAME'] = $email;
             header('Location:home.php');
