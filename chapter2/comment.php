@@ -21,6 +21,7 @@ exit;
     file_put_contents('bbs.json', json_encode($rows));
   }
 ?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>

@@ -32,14 +32,13 @@ if (isset($_POST["login"])) {
     
     
     if (!empty($email) && !empty($password)) {         
-        $dsn = sprintf('mysql: host=%s; dbname=%s; charset=utf8', 'localhost', 'work2_users');
+        
         try {
             $pdo = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $pdo->prepare('SELECT * FROM work2_users WHERE email = ?;');
             $stmt->execute(array($email));
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            var_dump($password); 
             if (password_verify($password, $result['password'])) {
             $_SESSION['USERNAME'] = $email;
             header('Location:home.php');
@@ -58,14 +57,14 @@ if (isset($_POST["login"])) {
 ?>
 
 <!doctype html>
-<html>
+<html lang="ja">
     <head>
             <meta charset="UTF-8">
             <title>ログイン</title>
     </head>
     <body>
         <h1>ログイン画面</h1>
-        <form name="loginForm" action="home.php" method="POST">
+        <form name="loginForm" action="" method="POST">
             <fieldset>
                 <legend>ログインフォーム</legend>
                 <label for="email">メールアドレス</label>
