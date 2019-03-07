@@ -6,45 +6,26 @@ header("Location:login.php");
 exit;
 }
 
-  function h($str) {
-    return htmlspecialchars($str, ENT_QUOTES);
-  }
-  $rows = json_decode(file_get_contents('bbs.json'), true);
-  if (!empty($_POST['write'])) {
-    $row = array(
-      'name' => $_POST['name'],
-      'title' => $_POST['title'],
-      'contents' => $_POST['contents'],
-      'time' => date("Y/m/d H:i:s")
-    );
-    array_unshift($rows, $row);
-    file_put_contents('bbs.json', json_encode($rows));
-  }
-?>
+//MySQLにデータを登録
+define('DB_DATABASE', 'work2_users');
+define('DB_USERNAME', 'basic');
+define('DB_PASSWORD', 'Basic-pass1');
+define('DB_DSN', 'mysql:host=localhost;charset=utf8;dbname='.DB_DATABASE);
+$pdo = new PDO(DB_DSN, DB_USERNAME, DB_PASSWORD);
 
+include('post.php');
+// 渡されたidを受け取る
+$id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_SPECIAL_CHARS);
+// 受け取ったidのレコードを取得
+$sql = "select * from work2_posts where id = ".$id;
+?>
 <!DOCTYPE html>
-<html lang="ja">
+<html lang = “ja”>
 <head>
 <meta charset="utf-8">
-<title>掲示板</title>
+<title>コメントページ</title>
 </head>
 <body>
-<form method="post">
-お名前: <input name="name"><br>
-題名: <input name="title"><br>
-<textarea name="contents" cols="60" rows="5"></textarea><br>
-<input type="submit" name="write" value="送信">
-</form>
-<a href="home.php">マイページ</a>
-<hr>
-<?php foreach($rows as $row): ?>
-  <strong><?php echo h($row['title']) ?></strong>
-  <br><small>投稿者：<?php echo h($row['name']) . ' ' . h($row['time']) ?></small>
-  <p><?php echo nl2br(h($row['contents']), false) ?></p>
-  <form name="loginForm" action="comment.php" method="POST">
-  <input type="submit" name="comment" value="コメント">
-  </form>
-  <hr>
-<?php endforeach ?>
+<?php echo $id ?>
 </body>
 </html>
