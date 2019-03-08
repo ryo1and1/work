@@ -49,6 +49,9 @@ if( isset($_POST['write'])){
         お名前:<?php echo htmlspecialchars($row['name'], ENT_QUOTES|ENT_HTML5) ?><br>
         題名:<?php echo htmlspecialchars($row['title'], ENT_QUOTES|ENT_HTML5) ?><br>
         内容:<?php echo htmlspecialchars($row['contents'], ENT_QUOTES|ENT_HTML5)?><br>
+        <form action="comment.php" method="post">
+        <input type="submit" name="comment" value="返信">
+        </form>
     <?php } ?>
 <hr>
 </body>
