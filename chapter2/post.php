@@ -51,6 +51,7 @@ if( isset($_POST['write'])){
         内容:<?php echo htmlspecialchars($row['contents'], ENT_QUOTES|ENT_HTML5)?><br>
         <form action="comment.php" method="post">
         <input type="submit" name="comment" value="返信">
+        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
         </form>
     <?php } ?>
 <hr>
