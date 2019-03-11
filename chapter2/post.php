@@ -53,6 +53,9 @@ if( isset($_POST['write'])){
         <input type="submit" name="comment" value="返信">
         <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
         </form>
+        <form action="count.php" method="get">
+        <input type="submit" value="いいね<?php readfile("./number.php") ?>">
+        </form>
     <?php } ?>
 <hr>
 </body>

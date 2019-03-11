@@ -39,8 +39,9 @@ if (!empty($id)){
 <textarea type="text" name="comments" cols="60" rows="5"></textarea><br>
 <input type="submit" name="post" value="送信">
 <input type="hidden" name="id" value="<?php echo $_POST['id']; ?>">
+<a href="post.php">投稿画面</a>
 </form>
-<?php $sql = "SELECT work2_posts.name, work2_posts.title, work2_posts.contents, work2_comments.name, work2_comments.comments 
+<?php $sql = "SELECT work2_posts.id, work2_posts.name, work2_posts.title, work2_posts.contents, work2_comments.name, work2_comments.comments 
 from work2_posts,work2_comments where work2_posts.id = work2_comments.posts_id;" ?>
     <?php $stmt = $pdo->query($sql); ?>
     <?php foreach ($stmt as $row) { ?>
